@@ -19,10 +19,7 @@ shipments={
     "Name ":"AYESHA NOOR",
     "Address":"Peshawar",},
 }
-@app.get("/shipment/latest")
-def GetShipment_latest()->dict[str,Any]:
-    id=max(shipments.keys())
-    return shipments[id]
+
 @app.get("/shipment")
 def GetShipment(id: int)->dict[str,Any]:
     if id  not in shipments:
@@ -30,7 +27,11 @@ def GetShipment(id: int)->dict[str,Any]:
                             ,detail="Id is not found")
         
     return shipments[id]
-
+@app.post("/shipment")
+def submit_shipment(Contact_no:str,Name:str,address:str)->dict[str,str]:
+    new_id=max(shipments.keys())+1
+    shipments[new_id]={"Contact no":Contact_no,"Name":Name,"Address":address}
+    return{"Id":str(new_id)}
 
 @app.get("/scalar")
 def get_Scalar_docs():
