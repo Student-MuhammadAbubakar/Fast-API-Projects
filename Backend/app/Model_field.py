@@ -1,0 +1,42 @@
+from fastapi import FastAPI, HTTPException,status
+from typing import Any
+from scalar_fastapi import get_scalar_api_reference 
+from .scheme import Shipment
+app=FastAPI()
+shipments={
+    2021:{"Contact no":"030803",
+    "Name ":"MUHAMMAD ABUBAKAR",
+    "Address":"Faisalabad",},
+    2022:{"Contact no":"03123456789",
+    "Name ":"ALI KHAN",
+    "Address":"Lahore",},
+    2023:{"Contact no":"03219876543",
+    "Name ":"SARA BIBI",
+    "Address":"Karachi",},
+    2024:{"Contact no":"03330001122",
+    "Name ":"OMAR RAHMAN",
+    "Address":"Islamabad",},
+    2025:{"Contact no":"03441234567",
+    "Name ":"AYESHA NOOR",
+    "Address":"Peshawar",},
+}
+
+@app.get("/shipment")
+def GetShipment(id: int)->dict[str,Any]:
+    if id  not in shipments:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND
+                            ,detail="Id is not found")
+        
+    return shipments[id]
+@app.post("/shipment")
+def submit_shipment(shipment:Shipment)->dict[str,str]:
+    new_id=max(shipments.keys())+1
+    shipments[new_id]={"Contact no":shipment.Contact_no,"Name":shipment.Name,"Address":shipment.Address}
+    return{"Id":str(new_id)}
+
+@app.get("/scalar")
+def get_Scalar_docs():
+    return get_scalar_api_reference(
+        openapi_url=app.openapi_url,
+        title="scalar Api",
+    )
